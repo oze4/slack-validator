@@ -67,9 +67,19 @@ function validateRequestIsFromSlack(slackAppSigningSecret, slackVersionNumber, h
         //let requestBody = httpReq.rawBody || httpReq.body.payload || httpReq.body;
         let requestBody = httpReq.get('x-raw-body');
         console.log(httpReq.headers);
+        console.log();
+
+        console.log("httpReq.body");
         console.log(httpReq.body);
+        console.log();
+
+        console.log("JSON.parse(httpReq.body)");
         console.log(JSON.parse(httpReq.body))
+        console.log();
+
+        console.log("x-raw-body");
         console.log(requestBody);
+        console.log();
 
         if (!(xSlackRequestTimeStamp && SlackSignature && requestBody)) {
             console.log('Invalid request from Slack');
@@ -86,9 +96,10 @@ function validateRequestIsFromSlack(slackAppSigningSecret, slackVersionNumber, h
 
         return (SlackSignature === hash);
 
-    } catch {
+    } catch (err) {
 
         //return httpRes.status(500).end();
+        console.log("error! " + err);
         return false;
 
     }

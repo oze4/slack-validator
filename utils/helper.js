@@ -55,6 +55,7 @@ function validateRequestIsFromSlack(slackAppSigningSecret, slackVersionNumber, h
         }
 
         const xSlackRequestTimeStamp = httpReq.get('X-Slack-Request-Timestamp')
+        console.log("xSlackRequestTimeStamp", xSlackRequestTimeStamp);
 
         if (!lessThanFiveMinutesOld(xSlackRequestTimeStamp)) {
             console.log('older than five min');
@@ -64,6 +65,7 @@ function validateRequestIsFromSlack(slackAppSigningSecret, slackVersionNumber, h
 
         let requestBody = httpReq.rawBody || httpReq.body.payload || httpReq.body;
         console.log(requestBody);
+        console.log(httpReq.headers)
 
         if (!(xSlackRequestTimeStamp && SlackSignature && requestBody)) {
             console.log('Invalid request from Slack');

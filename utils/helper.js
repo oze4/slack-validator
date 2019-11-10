@@ -73,9 +73,9 @@ function validateRequestIsFromSlack(slackAppSigningSecret, slackVersionNumber, h
         console.log(httpReq.body);
         console.log();
 
-        console.log("JSON.parse(httpReq.body)");
+        /*console.log("JSON.parse(httpReq.body)");
         console.log(JSON.parse(httpReq.body))
-        console.log();
+        console.log();*/
 
         console.log("x-raw-body");
         console.log(requestBody);

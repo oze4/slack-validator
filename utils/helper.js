@@ -69,8 +69,10 @@ function validateRequestIsFromSlack(slackAppSigningSecret, slackVersionNumber, h
         console.log(httpReq.headers)
         console.log(JSON.parse(requestBody))
         console.log(`slackVersionNumber:xSlackRequestTimeStamp:requestBody ${slackVersionNumber}:${xSlackRequestTimeStamp}:${requestBody}`)
+        try {
         let c = crypto.createHmac('sha256', slackAppSigningSecret).update(`${slackVersionNumber}:${xSlackRequestTimeStamp}:${requestBody}`).digest('hex')
-        console.log(`crypto.createHmac('sha256', slackAppSigningSecret).update(slackVersionNumber:xSlackRequestTimeStamp:requestBody).digest('hex') ${c}`)
+        } catch { console.log('nope') }
+        console.log(`crypto.createHmac('sha256', slackAppSigningSecret).update(slackVersionNumber:xSlackRequestTimeStamp:requestBody).digest('hex')`)
 
         if (!(xSlackRequestTimeStamp && SlackSignature && requestBody)) {
             console.log('Invalid request from Slack');

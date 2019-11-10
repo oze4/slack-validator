@@ -11,7 +11,7 @@ const middleware = require('../../utils/middleware');
  */
 router.post("/", (req, res, next) => {
     console.log("req.rawBody");
-    console.log(req.rawBody);
+    console.log(JSON.stringify(req.rawBody));
     let verified = middleware.verifySlackRequest(req, res);
     res.status(200).send({ status: verified });
 });

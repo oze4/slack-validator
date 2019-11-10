@@ -6,12 +6,14 @@ const helmet = require('helmet');
 const middleware = require('./utils/middleware');
 const ValidateController = require('./controllers/validate');
 
-const rawBody = { verify: middleware.rawBodyBuffer }
-const rawBodyExtended = { ...rawBody, extended: false }
-
 app.set('port', process.env.PORT);
-app.use(express.urlencoded(rawBodyExtended));
-app.use(express.json(rawBody));
+app.use(express.urlencoded({ 
+    verify: middleware.rawBodyBuffer, 
+    extended: false 
+}));
+app.use(express.json({
+    verify: middleware.rawBodyBuffer
+}));
 app.use(helmet());
 app.use("/validate", ValidateController);
 app.use((req, res, next) => res.status(500).send()); // Route not found

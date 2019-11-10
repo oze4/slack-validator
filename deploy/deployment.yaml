@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ugonnawinms-slack-validator
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ugonnawinms-slack-validator
+  template:
+    metadata:
+      labels:
+        app: ugonnawinms-slack-validator
+    spec:
+      containers:
+      - name: ugonnawinms-slack-validator
+        image: oze4/ugonnawinms-slack-validator:latest
+        env:
+        - name: PORT
+          value: ${PORT}
+        ports:
+        - containerPort: ${PORT}

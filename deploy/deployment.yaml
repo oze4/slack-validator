@@ -18,5 +18,9 @@ spec:
         env:
         - name: PORT
           value: ${PORT}
+        - name: VERIFICATION_TOKEN
+          value: ${VERIFICATION_TOKEN}
+        - name: SIGNING_SECRET
+          value: ${SIGNING_SECRET}
         ports:
         - containerPort: ${PORT}

@@ -65,7 +65,7 @@ function validateRequestIsFromSlack(slackAppSigningSecret, slackVersionNumber, h
         }
 
         //let requestBody = httpReq.rawBody || httpReq.body.payload || httpReq.body;
-        let requestBody = httpReq.body
+        let requestBody = httpReq.get('x-raw-body');
         console.log(httpReq.headers);
         console.log(requestBody);
 

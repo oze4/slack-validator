@@ -21,7 +21,7 @@ function lessThanFiveMinutesOld(reqTimestamp) {
  * @description Verifies that the Slack Verification Token (which they send on each request to us), matches what we have. 
  */
 function verifySlackToken(req) {
-    let tokenInRequest = req.body.token || JSON.parse(req.body.payload).token;
+    let tokenInRequest = req.body.token // || JSON.parse(req.body.payload).token;
     return tokenInRequest === process.env.VERIFICATION_TOKEN;
 }
 

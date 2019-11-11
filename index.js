@@ -7,7 +7,7 @@ const validateRequestIsFromSlack = require('./validator');
 
 app.set('port', process.env.PORT);
 
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(helmet());
 

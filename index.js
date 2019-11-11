@@ -11,7 +11,7 @@ app.use(express.urlencoded());
 app.use(express.json());
 app.use(helmet());
 
-app.use("/validate", (req, res, next) => {
+app.post("/validate", (req, res, next) => {
     res.status(200).send({ 
         status: validateRequestIsFromSlack(req)
     });

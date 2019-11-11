@@ -21,7 +21,7 @@ function lessThanFiveMinutesOld(reqTimestamp) {
  * @description Verifies that the Slack Verification Token (which they send on each request to us), matches what we have. 
  */
 function verifySlackToken(req) {
-    let tokenInRequest = req.body.token // || JSON.parse(req.body.payload).token;
+    let tokenInRequest = req.get('x-raw-token');
     return tokenInRequest === process.env.VERIFICATION_TOKEN;
 }
 
@@ -43,7 +43,6 @@ function validateRequestIsFromSlack(slackAppSigningSecret, slackVersionNumber, h
 
         if (signingSecretIsInvalid) {
             console.log('Slack signing secret empty or not a string');
-            //return httpRes.status(500).end() //.send('Slack signing secret empty or not a string');
             return false;
         }
 
@@ -51,7 +50,6 @@ function validateRequestIsFromSlack(slackAppSigningSecret, slackVersionNumber, h
 
         if (!SlackSignature) {
             console.log('No Slack signature found in request');
-            //return httpRes.status(500).end() //.send('No Slack signature found in request');
             return false;
         }
 
@@ -60,11 +58,9 @@ function validateRequestIsFromSlack(slackAppSigningSecret, slackVersionNumber, h
 
         if (!lessThanFiveMinutesOld(xSlackRequestTimeStamp)) {
             console.log('older than five min');
-            //return httpRes.status(500).end() //.send('older than five min');
             return false;
         }
 
-        //let requestBody = httpReq.rawBody || httpReq.body.payload || httpReq.body;
         let requestBody = httpReq.get('x-raw-body');
         console.log(httpReq.headers);
         console.log();
@@ -73,17 +69,12 @@ function validateRequestIsFromSlack(slackAppSigningSecret, slackVersionNumber, h
         console.log(httpReq.body);
         console.log();
 
-        /*console.log("JSON.parse(httpReq.body)");
-        console.log(JSON.parse(httpReq.body))
-        console.log();*/
-
         console.log("x-raw-body");
         console.log(requestBody);
         console.log();
 
         if (!(xSlackRequestTimeStamp && SlackSignature && requestBody)) {
             console.log('Invalid request from Slack');
-            //return httpRes.status(500).end() //.send('Invalid request from Slack');
             return false;
         }
 

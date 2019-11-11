@@ -3,24 +3,17 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const helmet = require('helmet');
-const middleware = require('./utils/middleware');
-//const ValidateController = require('./controllers/validate');
+const validateRequestIsFromSlack = require('./validator');
 
 app.set('port', process.env.PORT);
-/*app.use(express.urlencoded({ 
-    verify: middleware.rawBodyBuffer, 
-    extended: false 
-}));
-app.use(express.json({
-    verify: middleware.rawBodyBuffer
-}));*/
+
 app.use(express.urlencoded());
 app.use(express.json());
 app.use(helmet());
 
 app.use("/validate", (req, res, next) => {
     res.status(200).send({ 
-        status: middleware.verifySlackRequest(req)
+        status: validateRequestIsFromSlack(req)
     });
 });
 
@@ -30,5 +23,6 @@ const server = app.listen(app.get('port'), () => {
     const _addr = server.address();
     const _prefix = _addr.port === 443 ? "https://" : "http://";
     const _host = _addr.address == "::" ? require('os').hostname : _addr.address;
+
     console.log(`App started on: '${_prefix}${_host}:${_addr.port}'`)
 });

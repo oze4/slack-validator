@@ -2,9 +2,7 @@
 const crypto = require('crypto');
 
 /**
- * 
  * @param {Number} reqTimestamp
- * 
  * @description  Determines if X timestamp is less than five minutes old. This is done to verify the Slack request isn't older than 
  *                 five minutes. If it is, it is possible it might be a replay attack, so we drop it. 
  */
@@ -15,9 +13,7 @@ function lessThanFiveMinutesOld(reqTimestamp) {
 
 
 /**
- * 
  * @param {HttpRequest} req
- * 
  * @description Verifies that the Slack Verification Token (which they send on each request to us), matches what we have. 
  */
 function verifySlackToken(req) {
@@ -27,18 +23,19 @@ function verifySlackToken(req) {
 
 
 /**
- * 
  * @param {String} slackAppSigningSecret 
  * @param {String} slackVersionNumber 
  * @param {HttpRequest} httpReq 
  * @param {HttpResponse} httpRes 
- * 
  * @description Validates the request has not been modified en route. This is done per Slack. Slack recommends doing this per best practices. 
  *              - Taken From: https://github.com/gverni/validate-slack-request/blob/master/index.js
  */
-function validateRequestIsFromSlack(slackAppSigningSecret, slackVersionNumber, httpReq) {
+function validateRequestIsFromSlack(httpReq) {
     try {
 
+        const slackVersionNumber = "v0";
+        const slackAppSigningSecret = process.env.SIGNING_SECRET;
+        
         let signingSecretIsInvalid = !slackAppSigningSecret || typeof slackAppSigningSecret !== 'string' || slackAppSigningSecret === '';
         if (signingSecretIsInvalid) {
             console.log('Slack signing secret empty or not a string');
@@ -94,7 +91,4 @@ function validateRequestIsFromSlack(slackAppSigningSecret, slackVersionNumber, h
     }
 }
 
-module.exports = {
-    verifySlackToken,
-    validateRequestIsFromSlack
-}
+module.exports = validateRequestIsFromSlack;

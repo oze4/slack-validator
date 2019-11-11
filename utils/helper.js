@@ -36,18 +36,16 @@ function verifySlackToken(req) {
  * @description Validates the request has not been modified en route. This is done per Slack. Slack recommends doing this per best practices. 
  *              - Taken From: https://github.com/gverni/validate-slack-request/blob/master/index.js
  */
-function validateRequestIsFromSlack(slackAppSigningSecret, slackVersionNumber, httpReq, httpRes) {
+function validateRequestIsFromSlack(slackAppSigningSecret, slackVersionNumber, httpReq) {
     try {
 
         let signingSecretIsInvalid = !slackAppSigningSecret || typeof slackAppSigningSecret !== 'string' || slackAppSigningSecret === '';
-
         if (signingSecretIsInvalid) {
             console.log('Slack signing secret empty or not a string');
             return false;
         }
 
         const SlackSignature = httpReq.get('X-Slack-Signature');
-
         if (!SlackSignature) {
             console.log('No Slack signature found in request');
             return false;
@@ -55,7 +53,6 @@ function validateRequestIsFromSlack(slackAppSigningSecret, slackVersionNumber, h
 
         const xSlackRequestTimeStamp = httpReq.get('X-Slack-Request-Timestamp')
         console.log("xSlackRequestTimeStamp", xSlackRequestTimeStamp);
-
         if (!lessThanFiveMinutesOld(xSlackRequestTimeStamp)) {
             console.log('older than five min');
             return false;
@@ -64,11 +61,9 @@ function validateRequestIsFromSlack(slackAppSigningSecret, slackVersionNumber, h
         let requestBody = httpReq.get('x-raw-body');
         console.log(httpReq.headers);
         console.log();
-
         console.log("httpReq.body");
         console.log(httpReq.body);
         console.log();
-
         console.log("x-raw-body");
         console.log(requestBody);
         console.log();
@@ -80,16 +75,19 @@ function validateRequestIsFromSlack(slackAppSigningSecret, slackVersionNumber, h
 
         const baseString = `${slackVersionNumber}:${xSlackRequestTimeStamp}:${requestBody}`;
         const hash = `${slackVersionNumber}=${crypto.createHmac('sha256', slackAppSigningSecret).update(baseString).digest('hex')}`;
-
         console.log("baseString " + baseString);
         console.log("hash " + hash);
         console.log("SlackSignature " + SlackSignature);
 
-        return (SlackSignature === hash);
+        if (SlackSignature === hash) {
+            return verifySlackToken(httpReq);
+        } else {
+            console.log("SlackSignature does not match hash");
+            return false;
+        }
 
     } catch (err) {
 
-        //return httpRes.status(500).end();
         console.log("error! " + err);
         return false;
 

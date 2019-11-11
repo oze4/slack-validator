@@ -4,18 +4,26 @@ const express = require('express');
 const app = express();
 const helmet = require('helmet');
 const middleware = require('./utils/middleware');
-const ValidateController = require('./controllers/validate');
+//const ValidateController = require('./controllers/validate');
 
 app.set('port', process.env.PORT);
-app.use(express.urlencoded({ 
+/*app.use(express.urlencoded({ 
     verify: middleware.rawBodyBuffer, 
     extended: false 
 }));
 app.use(express.json({
     verify: middleware.rawBodyBuffer
-}));
+}));*/
+app.use(express.urlencoded());
+app.use(express.json());
 app.use(helmet());
-app.use("/validate", ValidateController);
+
+app.use("/validate", (req, res, next) => {
+    res.status(200).send({ 
+        status: middleware.verifySlackRequest(req)
+    });
+});
+
 app.use((req, res, next) => res.status(500).send()); // Route not found
 
 const server = app.listen(app.get('port'), () => {

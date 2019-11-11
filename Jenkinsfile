@@ -1,19 +1,13 @@
 def app
-def slave_pod = 'jenkins-slave-pod'
-def container_in_slave_pod = 'docker'
-def kube_config_id = 'ost-sf-kube-00-config'
-def deployment_manifest = 'deploy/*'
-def dockerhub_container_name = 'oze4/ugonnawinms-slack-validator'
-
-podTemplate(label: slave_pod) {
-    node(slave_pod) {
-        container(container_in_slave_pod) {
+podTemplate(label: "${SLAVE_POD}") {
+    node("${SLAVE_POD}") {
+        container("${SLAVE_POD_CONTAINER}") {
             stage('Clone Repository') {
                 checkout scm
             }
             
             stage ('Build Image') {
-                app = docker.build("${dockerhub_container_name}")
+                app = docker.build("${CONTAINER_NAME}")
             }
             
             stage('Test Image') {
@@ -23,7 +17,7 @@ podTemplate(label: slave_pod) {
             }
             
             stage('Push Image To Docker Hub') {
-                docker.withRegistry("${CONTAINER_REGISTRY}", 'docker-hub-credentials') {
+                docker.withRegistry("${CONTAINER_REGISTRY}", "${REGISTRY_CREDENTIALS}") {
                     app.push("${env.BUILD_NUMBER}")
                     app.push("latest")
                 }
@@ -31,16 +25,16 @@ podTemplate(label: slave_pod) {
             
             stage('Clean Pod') {
                 kubernetesDeploy(
-                    kubeconfigId: "${kube_config_id}",
-                    configs: "${deployment_manifest}",
+                    kubeconfigId: "${KUBE_CONFIG}",
+                    configs: "${MANIFEST}",
                     deleteResource: true
                 )
             }
             
             stage('Deploy New Pod') {
                 kubernetesDeploy(
-                    kubeconfigId: "${kube_config_id}",
-                    configs: "${deployment_manifest}",
+                    kubeconfigId: "${KUBE_CONFIG}",
+                    configs: "${MANIFEST}",
                 )
             }
         }
